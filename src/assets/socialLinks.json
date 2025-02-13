@@ -26,13 +26,13 @@
   {
     "name": "Twitter",
     "icon": "/images/icon/twitter.png",
-    "tip": "你懂的 ~",
+    "tip": "小蓝鸟, 你懂的 ~",
     "url": "https://x.com/yu_shuhang"
   },
   {
     "name": "Telegram",
     "icon": "/images/icon/telegram.png",
-    "tip": "你懂的 ~",
+    "tip": "纸飞机, 你懂的 ~",
     "url": "https://t.me/yushuhang"
   }
 ]
