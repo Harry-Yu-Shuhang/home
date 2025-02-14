@@ -49,6 +49,13 @@ jobs:
           name: Home
           path: dist
 
+      #检查ssh     
+      - name: Debug SSH Key
+      run: |
+        echo "Checking SSH Key"
+        echo "${{ secrets.SERVER_SSH_KEY }}" | head -n 5
+
+
       # 7️⃣ 在服务器上拉取新代码并重启 Nginx
       - name: Deploy on Server
         uses: appleboy/ssh-action@v0.1.10
