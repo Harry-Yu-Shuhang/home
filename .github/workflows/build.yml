@@ -73,7 +73,7 @@ jobs:
           host: "[${{ secrets.SERVER_IP }}]" # ✅ IPv6 地址必须加 []
           username: ${{ secrets.SERVER_USER }}
           # key: ${{ secrets.SERVER_SSH_KEY }}
-          key_path: private_key.pem  # ✅ 直接引用 key 文件
+          key_path: ./private_key.pem  # ✅ 确保 key_path 指向正确的文件
           script: |
             cd /home/admin/homepage
             git reset --hard  # 防止 pull 失败

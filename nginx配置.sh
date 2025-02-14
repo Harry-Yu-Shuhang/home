@@ -18,8 +18,8 @@ server {
     server_name harryyu.work;
 
     # SSL 证书路径（换成你的实际路径）
-    ssl_certificate /home/admin/ssl_certificate/harryyu.work.pem;
-    ssl_certificate_key /home/admin/ssl_certificate/harryyu.work.key;
+    ssl_certificate /home/admin/.ssh/harryyu.work.pem;
+    ssl_certificate_key /home/admin/.ssh/harryyu.work.key;
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
