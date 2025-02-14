@@ -38,6 +38,11 @@ jobs:
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+ 
+      # 确保输出路径存在
+      - name: Create output directory
+        run: mkdir -p dist
+
       # 上传构建产物
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -54,7 +59,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           source: "./dist/homepage.zip"
-          target: "/home/admin"
+          target: "/home/admin/"
       
       - name: SSH into Server and Deploy
         uses: appleboy/ssh-action@v0.1.2
@@ -64,6 +69,6 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           script: |
-            cd /home/admin
+            cd /home/admin/
             unzip -o homepage.zip
             rm homepage.zip
