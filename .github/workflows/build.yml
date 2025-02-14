@@ -49,11 +49,21 @@ jobs:
           name: Home
           path: dist
 
-      #检查ssh     
-      - name: Debug SSH Key
+      # - name: Debug GitHub Secrets
+      #   run: |
+      #     echo "Checking if SERVER_SSH_KEY is set"
+      #     if [[ -z "${{ secrets.SERVER_SSH_KEY }}" ]]; then
+      #       echo "ERROR: SERVER_SSH_KEY is EMPTY!"
+      #       exit 1
+      #     else
+      #       echo "SERVER_SSH_KEY is set"
+      #     fi
+
+      - name: Setup SSH Key
         run: |
-          echo "Checking SSH Key"
-          echo "${{ secrets.SERVER_SSH_KEY }}" | head -n 5
+          echo "${{ secrets.SERVER_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
 
 
       # 7️⃣ 在服务器上拉取新代码并重启 Nginx
@@ -62,7 +72,8 @@ jobs:
         with:
           host: "[${{ secrets.SERVER_IP }}]" # ✅ IPv6 地址必须加 []
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          # key: ${{ secrets.SERVER_SSH_KEY }}
+          key_path: private_key.pem  # ✅ 直接引用 key 文件
           script: |
             cd /home/admin/homepage
             git reset --hard  # 防止 pull 失败
