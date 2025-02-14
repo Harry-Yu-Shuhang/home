@@ -73,6 +73,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
+          debug: true
           script: |
             cd /home/admin/
             tar -xzvf homepage.tar.gz
