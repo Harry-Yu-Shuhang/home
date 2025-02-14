@@ -63,6 +63,10 @@ jobs:
         run: |
           echo "${{ secrets.SERVER_SSH_KEY }}" > private_key.pem
           chmod 600 private_key.pem
+          if [ ! -s private_key.pem ]; then
+            echo "SSH key is empty or not set correctly"
+            exit 1
+          fi
 
 
 
@@ -70,12 +74,11 @@ jobs:
       - name: Deploy on Server
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: "[${{ secrets.SERVER_IP }}]" # ✅ IPv6 地址必须加 []
+          host: "[${{ secrets.SERVER_IP }}]"
           username: ${{ secrets.SERVER_USER }}
-          # key: ${{ secrets.SERVER_SSH_KEY }}
-          key_path: ./private_key.pem  # ✅ 确保 key_path 指向正确的文件
+          key_path: ./private_key.pem
           script: |
             cd /home/admin/homepage
-            git reset --hard  # 防止 pull 失败
+            git reset --hard
             git pull origin main
             echo ${{ secrets.SERVER_USER }} | sudo -S systemctl restart nginx
