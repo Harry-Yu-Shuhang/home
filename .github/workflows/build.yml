@@ -76,7 +76,12 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key_path: ./private_key.pem
           script: |
-            cd /home/admin/homepage
+            cd /home/admin
+            if [ ! -d "homepage/.git" ]; then
+              rm -rf homepage
+              git clone https://github.com/你的GitHub仓库.git homepage
+            fi
+            cd homepage
             git reset --hard
             git pull origin main
             echo ${{ secrets.SERVER_USER }} | sudo -S systemctl restart nginx
