@@ -61,14 +61,12 @@ jobs:
 
       - name: Setup SSH Key
         run: |
-          echo "${{ secrets.SERVER_SSH_KEY }}" > private_key.pem
+          echo "${{ secrets.SERVER_SSH_KEY }}" | tr -d '\r' > private_key.pem
           chmod 600 private_key.pem
           if [ ! -s private_key.pem ]; then
             echo "SSH key is empty or not set correctly"
             exit 1
           fi
-
-
 
       # 7️⃣ 在服务器上拉取新代码并重启 Nginx
       - name: Deploy on Server
