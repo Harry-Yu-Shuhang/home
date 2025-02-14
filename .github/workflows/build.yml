@@ -11,7 +11,7 @@ on:
 jobs:
   release:
     name: Build Website
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       # 检出 Git 仓库
@@ -25,11 +25,11 @@ jobs:
       # 复制环境变量文件
       - name: Copy .env.example
         run: |
-          if [ ! -f .env ]; then
-            cp .env.example .env
-          else
-            echo ".env file already exists. Skipping the copy step."
-          fi
+          if (-not (Test-Path .env)) {
+            Copy-Item .env.example .env
+          } else {
+            Write-Host ".env file already exists. Skipping the copy step."
+          }
       # 安装项目依赖
       - name: Install Dependencies
         run: npm install
@@ -38,43 +38,9 @@ jobs:
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-
-      
-      # 确保输出路径存在
-      - name: Create output directory
-        run: mkdir -p dist
-
-      # 手动打包为 tar 文件
-      - name: Create tarball
-        run: tar -czvf homepage.tar.gz -C dist .
-
       # 上传构建产物
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: homepage
-          path: homepage.tar.gz
-
-      # 上传并解压构建产物到服务器
-      - name: Upload and Unzip on Server
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
-          source: "./homepage.tar.gz"
-          target: "/home/admin/"
-      
-      - name: SSH into Server and Deploy
-        uses: appleboy/ssh-action@v0.1.2
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
-          debug: true
-          script: |
-            cd /home/admin/
-            tar -xzvf homepage.tar.gz
-            rm homepage.tar.gz
+          name: Home
+          path: dist
