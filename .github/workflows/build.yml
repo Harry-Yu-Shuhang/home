@@ -38,17 +38,22 @@ jobs:
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
- 
+
+      
       # 确保输出路径存在
       - name: Create output directory
         run: mkdir -p dist
+
+      # 手动打包为 tar 文件
+      - name: Create tarball
+        run: tar -czvf homepage.tar.gz -C dist .
 
       # 上传构建产物
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: homepage
-          path: dist
+          path: homepage.tar.gz
 
       # 上传并解压构建产物到服务器
       - name: Upload and Unzip on Server
@@ -58,7 +63,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
-          source: "./dist/homepage.zip"
+          source: "./homepage.tar.gz"
           target: "/home/admin/"
       
       - name: SSH into Server and Deploy
@@ -70,5 +75,5 @@ jobs:
           port: 22
           script: |
             cd /home/admin/
-            unzip -o homepage.zip
-            rm homepage.zip
+            tar -xzvf homepage.tar.gz
+            rm homepage.tar.gz
