@@ -1,6 +1,5 @@
-# Dev 分支推送部署预览
-## 仅部署 Win 端
-name: Build Dev
+# Dev & Master 分支自动构建并部署
+name: Build & Deploy Website
 
 on:
   push:
@@ -10,42 +9,47 @@ on:
 
 jobs:
   release:
-    name: Build Website
-    runs-on: ubuntu-latest #原来是windows
+    name: Build & Deploy Website
+    runs-on: ubuntu-latest  # ✅ 改为 Linux
 
     steps:
-      # 检出 Git 仓库
-      - name: Check out git repository
+      # 1️⃣ 检出 Git 仓库
+      - name: Checkout Repository
         uses: actions/checkout@v4.1.1
-      # 安装 Node.js
+
+      # 2️⃣ 安装 Node.js
       - name: Install Node.js
         uses: actions/setup-node@v4.0.0
         with:
           node-version: "18.x"
-      # 复制环境变量文件
+
+      # 3️⃣ 复制环境变量文件（修正 Linux 语法）
       - name: Copy .env.example
         run: |
-          if (-not (Test-Path .env)) {
-            Copy-Item .env.example .env
-          } else {
-            Write-Host ".env file already exists. Skipping the copy step."
-          }
-      # 安装项目依赖
+          if [ ! -f .env ]; then
+            cp .env.example .env
+          else
+            echo ".env file already exists. Skipping the copy step."
+          fi
+
+      # 4️⃣ 安装依赖
       - name: Install Dependencies
         run: npm install
-      # 构建程序
+
+      # 5️⃣ 构建静态网站
       - name: Build Website
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      # 上传构建产物
+
+      # 6️⃣ 上传构建产物（可选）
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Home
           path: dist
 
-      # 在服务器上拉取新代码并重启 Nginx
+      # 7️⃣ 在服务器上拉取新代码并重启 Nginx
       - name: Deploy on Server
         uses: appleboy/ssh-action@v0.1.10
         with:
